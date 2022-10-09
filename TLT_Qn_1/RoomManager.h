@@ -44,6 +44,7 @@ public:
 	bool roomCheckout(std::string roomNum);
 	bool roomCleaned(std::string roomNum);
 	bool roomRepaired(std::string roomNum);
+	bool roomInRepair(std::string roomNum);
 	std::vector<std::string> listAllAvailableRooms();
 	
 private:
@@ -51,7 +52,7 @@ private:
 	
 	static int getRoomIdHash(const int flr, const char sfx);
 	static int getRoomIdHash(const std::string &roomNum);
-	bool changeRoomState(int rmId, eRoomState from, eRoomState to);
+	bool changeRoomState(int rmId, eRoomState fromState, eRoomState toState);
 
 	std::unordered_map<int, Room> rooms;
 	std::map<eRoomState, std::unordered_set<int>> roomlists;

@@ -38,7 +38,7 @@ std::string RoomManager::requestAndAssignRoom() {
 bool RoomManager::roomCheckout(std::string roomNum) {
 	auto h = getRoomIdHash(roomNum);
 	if (h > 0) {
-		
+		return changeRoomState(h, eRoomState::OCCUPIED, eRoomState::VACANT);
 	}
 	return false;
 }
@@ -46,7 +46,7 @@ bool RoomManager::roomCheckout(std::string roomNum) {
 bool RoomManager::roomCleaned(std::string roomNum) {
 	auto h = getRoomIdHash(roomNum);
 	if (h > 0) {
-
+		return changeRoomState(h, eRoomState::VACANT, eRoomState::AVAILABLE);
 	}
 	return false;
 }
@@ -54,7 +54,15 @@ bool RoomManager::roomCleaned(std::string roomNum) {
 bool RoomManager::roomRepaired(std::string roomNum) {
 	auto h = getRoomIdHash(roomNum);
 	if (h > 0) {
+		return changeRoomState(h, eRoomState::REPAIR, eRoomState::VACANT);
+	}
+	return false;
+}
 
+bool RoomManager::roomInRepair(std::string roomNum) {
+	auto h = getRoomIdHash(roomNum);
+	if (h > 0) {
+		return changeRoomState(h, eRoomState::VACANT, eRoomState::REPAIR);
 	}
 	return false;
 }
@@ -111,7 +119,7 @@ int RoomManager::getRoomIdHash(const std::string &roomNum) {
 	return -1;
 }
 
-bool RoomManager::changeRoomState(int rmId, eRoomState from, eRoomState to) {
+bool RoomManager::changeRoomState(int rmId, eRoomState fromState, eRoomState toState) {
 	if (rooms.count(rmId)) {
 		if (!roomlists[from].erase(rmId))
 			return false;

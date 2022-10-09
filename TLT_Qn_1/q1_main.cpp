@@ -1,8 +1,10 @@
 
-#include <iostream>
-using namespace std;
+#include "RoomManager.h"
 
 int main()
 {
-    std::cout << "Hello World 1!\n";
+    RoomManager *mngr = new RoomManager();
+
+
+    return 0;
 }
