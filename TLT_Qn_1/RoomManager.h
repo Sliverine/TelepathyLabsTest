@@ -48,8 +48,6 @@ public:
 	std::vector<std::string> listAllAvailableRooms();
 	
 private:
-
-	
 	static int getRoomIdHash(const int flr, const char sfx);
 	static int getRoomIdHash(const std::string &roomNum);
 	bool changeRoomState(int rmId, eRoomState fromState, eRoomState toState);

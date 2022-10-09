@@ -121,11 +121,11 @@ int RoomManager::getRoomIdHash(const std::string &roomNum) {
 
 bool RoomManager::changeRoomState(int rmId, eRoomState fromState, eRoomState toState) {
 	if (rooms.count(rmId)) {
-		if (!roomlists[from].erase(rmId))
+		if (!roomlists[fromState].erase(rmId))
 			return false;
 
-		roomlists[to].insert(rmId);
-		rooms[rmId].state = to;
+		roomlists[toState].insert(rmId);
+		rooms[rmId].state = toState;
 		return true;
 	}
 	return false;
