@@ -1,9 +1,10 @@
 #pragma once
 
-#include <set>
 #include <unordered_set>
+#include <unordered_map>
 #include <map>
 #include <vector>
+#include <string>
 using namespace std;
 
 enum class eRoomState : int {
@@ -16,11 +17,20 @@ enum class eRoomState : int {
 
 struct Room {
 	eRoomState state = eRoomState::UNDEFINED;
-	int id = -1; // used for internal sorting
+	int hash = -1; // used for internal sorting
 	int floor = 0;
 	char suffix = '\0';
-
-	Room(eRoomState st) { state = st; };
+	std::string id = "";
+	
+	void populateRoomNumber() {
+		std::string res = std::to_string(floor) + suffix;
+		id = res;
+	}
+	bool operator<(const Room& other) const {
+		if (this->hash < other.hash)
+			return true;
+		return false;
+	}
 };
 
 class RoomManager
@@ -29,27 +39,20 @@ public:
 	RoomManager();
 	~RoomManager();
 
-	void addRoom(int flr, char sfx);
-	Room requestNewRoom();
-	bool roomCheckout(Room& rm);
-	bool roomCleaned(Room& rm);
-	bool roomRepaired(Room& rm);
-	std::vector<Room> listAllAvailableRooms();
+	bool addRoomToList(int flr, char sfx);
+	std::string requestAndAssignRoom();
+	bool roomCheckout(std::string roomNum);
+	bool roomCleaned(std::string roomNum);
+	bool roomRepaired(std::string roomNum);
+	std::vector<std::string> listAllAvailableRooms();
 	
 private:
 
-	struct RoomList
-	{
-		bool sorted = false;
-		union
-		{
-			std::set<Room> roomList_sorted;
-			std::unordered_set<Room> roomList_unsorted;
-		};
-	};
+	
+	static int getRoomIdHash(const int flr, const char sfx);
+	static int getRoomIdHash(const std::string &roomNum);
+	bool changeRoomState(int rmId, eRoomState from, eRoomState to);
 
-	int generateRoomIdHash(int flr, char sfx);
-	bool changeRoomState(Room& rm);
-
-	std::map<eRoomState, RoomList> rooms;
+	std::unordered_map<int, Room> rooms;
+	std::map<eRoomState, std::unordered_set<int>> roomlists;
 };
