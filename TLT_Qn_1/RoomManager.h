@@ -40,6 +40,8 @@ public:
 	~RoomManager();
 
 	bool addRoomToList(int flr, char sfx);
+	bool addRoomToList(int flr, char sfx);
+
 	std::string requestAndAssignRoom();
 	bool roomCheckout(std::string roomNum);
 	bool roomCleaned(std::string roomNum);

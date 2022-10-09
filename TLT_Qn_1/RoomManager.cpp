@@ -96,7 +96,7 @@ int RoomManager::getRoomIdHash(const int flr, const char sfx) {
 			sfx_int = 5;
 			break;
 		default:
-			break;
+			return -1;
 	}
 
 	if (flr%2 == 0) {
@@ -107,14 +107,18 @@ int RoomManager::getRoomIdHash(const int flr, const char sfx) {
 
 int RoomManager::getRoomIdHash(const std::string &roomNum) {
 	size_t i = 0;
+	char sfx = '\0';
 	for (; i < roomNum.length(); ++i) {
-		if (isdigit(roomNum[i]))
+		if (!std::isdigit(roomNum[i])) {
+			sfx = (char)std::toupper((int)roomNum[i]);
 			break;
+		}	
 	}
 
-	std::string str = roomNum.substr(i, roomNum.length() - i);
-	if (!str.empty()) {
-		return std::atoi(str.c_str());
+	std::string str = roomNum.substr(0, i);
+	if (!str.empty() && sfx != '\0') {
+		int flr = std::atoi(str.c_str());
+		return getRoomIdHash(flr, sfx);
 	}
 	return -1;
 }
