@@ -40,7 +40,7 @@ public:
 	~RoomManager();
 
 	bool addRoomToList(int flr, char sfx);
-	bool addRoomToList(int flr, char sfx);
+	bool addRoomToList(std::string roomNum);
 
 	std::string requestAndAssignRoom();
 	bool roomCheckout(std::string roomNum);
@@ -52,6 +52,7 @@ public:
 private:
 	static int getRoomIdHash(const int flr, const char sfx);
 	static int getRoomIdHash(const std::string &roomNum);
+	static std::pair<int, char> getRoomNumFromHash(int hash);
 	bool changeRoomState(int rmId, eRoomState fromState, eRoomState toState);
 
 	std::unordered_map<int, Room> rooms;

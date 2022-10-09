@@ -11,7 +11,7 @@ RoomManager::~RoomManager() {
 
 bool RoomManager::addRoomToList(int flr, char sfx) {
 	int h = getRoomIdHash(flr, sfx);
-	if (rooms.find(h) != rooms.end())
+	if (h < 0 || rooms.find(h) != rooms.end())
 		return false;
 
 	rooms[h].hash = h;
@@ -22,6 +22,15 @@ bool RoomManager::addRoomToList(int flr, char sfx) {
 	
 	roomlists[eRoomState::AVAILABLE].insert(h);
 	return true;
+}
+
+bool RoomManager::addRoomToList(std::string roomNum) {
+	int h = getRoomIdHash(roomNum);
+	if (h < 0 || rooms.find(h) != rooms.end())
+		return false;
+
+	auto rmDetails = getRoomNumFromHash(h);
+	return addRoomToList(rmDetails.first, rmDetails.second);
 }
 
 std::string RoomManager::requestAndAssignRoom() {
@@ -121,6 +130,34 @@ int RoomManager::getRoomIdHash(const std::string &roomNum) {
 		return getRoomIdHash(flr, sfx);
 	}
 	return -1;
+}
+
+std::pair<int, char> RoomManager::getRoomNumFromHash(int hash) {
+	int floor = hash / 10;
+	int suf = hash % 10;
+	char c = '\0';
+	bool inv = floor % 2 == 0;
+
+	switch (suf) {
+		case 1:
+			inv ? c = 'E' : c = 'A';
+			break;
+		case 2:
+			inv ? c = 'D' : c = 'B';
+			break;
+		case 3:
+			inv ? c = 'C' : c = 'C';
+			break;
+		case 4:
+			inv ? c = 'B' : c = 'D';
+			break;
+		case 5:
+			inv ? c = 'A' : c = 'E';
+			break;
+		default:
+			return std::make_pair(-1, c);
+	}
+	return std::make_pair(floor, c);
 }
 
 bool RoomManager::changeRoomState(int rmId, eRoomState fromState, eRoomState toState) {
