@@ -18,7 +18,7 @@ protected:
 			"4A", "4B", "4C", "4D", "4E"};
 
 		for (auto& r : rms)
-			rm_test.addRoomToList(r);
+			rm_test.addNewRoom(r);
 	}
 
 	RoomManager rm_test;

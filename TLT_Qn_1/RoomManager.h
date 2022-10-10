@@ -6,7 +6,6 @@
 #include <map>
 #include <vector>
 #include <string>
-#include <variant>
 using namespace std;
 
 enum class eRoomState : int {
@@ -41,8 +40,8 @@ public:
 	RoomManager();
 	~RoomManager();
 
-	bool addRoomToList(int flr, char sfx);
-	bool addRoomToList(std::string roomNum);
+	bool addNewRoom(int flr, char sfx);
+	bool addNewRoom(std::string roomNum);
 	bool hasRoomInList(std::string roomNum, eRoomState liststate);
 	bool hasRoom(std::string roomNum);
 

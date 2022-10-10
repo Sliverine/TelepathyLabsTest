@@ -10,9 +10,9 @@ RoomManager::RoomManager() {
 RoomManager::~RoomManager() {
 }
 
-bool RoomManager::addRoomToList(int flr, char sfx) {
+bool RoomManager::addNewRoom(int flr, char sfx) {
 	int h = getRoomIdHash(flr, sfx);
-	if (h < 0 || rooms.find(h) != rooms.end())
+	if (h < 0 || rooms.find(h) != rooms.end() || sfx == '\0')
 		return false;
 
 	rooms[h].hash = h;
@@ -25,12 +25,12 @@ bool RoomManager::addRoomToList(int flr, char sfx) {
 	return true;
 }
 
-bool RoomManager::addRoomToList(std::string roomNum) {
+bool RoomManager::addNewRoom(std::string roomNum) {
 	auto details = getRoomDetailsFromNum(roomNum);
 	if (details.first < 0)
 		return false;
 
-	return addRoomToList(details.first, details.second);
+	return addNewRoom(details.first, details.second);
 }
 
 bool RoomManager::hasRoomInList(std::string roomNum, eRoomState liststate) {
@@ -94,8 +94,12 @@ std::vector<std::string> RoomManager::listAllAvailableRooms() {
 }
 
 int RoomManager::getRoomIdHash(const int flr, const char sfx) {
+	if (flr <= 0)
+		return -1;
+
 	int sfx_int = 0;
-	switch(sfx) {
+	char suf = (char)std::toupper((int)sfx);
+	switch(suf) {
 		case 'A':
 			sfx_int = 1;
 			break;
