@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_set>
+#include <set>
 #include <unordered_map>
 #include <map>
 #include <vector>
@@ -55,6 +56,16 @@ private:
 	static std::pair<int, char> getRoomNumFromHash(int hash);
 	bool changeRoomState(int rmId, eRoomState fromState, eRoomState toState);
 
+	struct RoomList
+	{
+		bool isSorted = false;
+		union
+		{
+			std::unordered_set<int> u_list;
+			std::set<int> s_list;
+		};
+	};
+
 	std::unordered_map<int, Room> rooms;
-	std::map<eRoomState, std::unordered_set<int>> roomlists;
+	std::map<eRoomState, RoomList> roomlists;
 };

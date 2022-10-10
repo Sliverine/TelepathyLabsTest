@@ -20,7 +20,7 @@ bool RoomManager::addRoomToList(int flr, char sfx) {
 	rooms[h].state = eRoomState::AVAILABLE;
 	rooms[h].populateRoomNumber();
 	
-	roomlists[eRoomState::AVAILABLE].insert(h);
+	roomlists[eRoomState::AVAILABLE].s_list.insert(h);
 	return true;
 }
 
@@ -35,8 +35,8 @@ bool RoomManager::addRoomToList(std::string roomNum) {
 
 std::string RoomManager::requestAndAssignRoom() {
 	std::string res;
-	if (!roomlists[eRoomState::AVAILABLE].empty()) {
-		const int h = (*roomlists[eRoomState::AVAILABLE].begin());
+	if (!roomlists[eRoomState::AVAILABLE].s_list.empty()) {
+		const int h = (*roomlists[eRoomState::AVAILABLE].s_list.begin());
 		if (changeRoomState(h, eRoomState::AVAILABLE, eRoomState::OCCUPIED)) {
 			res = rooms[h].id;
 		}
@@ -79,7 +79,7 @@ bool RoomManager::roomInRepair(std::string roomNum) {
 std::vector<std::string> RoomManager::listAllAvailableRooms() {
 	std::vector<std::string> res;
 
-	for (auto& r : roomlists[eRoomState::AVAILABLE]) {
+	for (auto& r : roomlists[eRoomState::AVAILABLE].s_list) {
 		res.emplace_back(rooms[r].id);
 	}
 
@@ -162,10 +162,21 @@ std::pair<int, char> RoomManager::getRoomNumFromHash(int hash) {
 
 bool RoomManager::changeRoomState(int rmId, eRoomState fromState, eRoomState toState) {
 	if (rooms.count(rmId)) {
-		if (!roomlists[fromState].erase(rmId))
-			return false;
 
-		roomlists[toState].insert(rmId);
+		if (roomlists[fromState].isSorted) {
+			if (!roomlists[fromState].s_list.erase(rmId))
+				return false;
+		}
+		else {
+			if (!roomlists[fromState].u_list.erase(rmId))
+				return false;
+		}
+
+		if (roomlists[toState].isSorted)
+			roomlists[toState].s_list.insert(rmId);
+		else
+			roomlists[toState].u_list.insert(rmId);
+
 		rooms[rmId].state = toState;
 		return true;
 	}
