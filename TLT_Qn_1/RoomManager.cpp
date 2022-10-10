@@ -4,6 +4,7 @@
 
 
 RoomManager::RoomManager() {
+	roomlists[eRoomState::AVAILABLE].isSorted = true;
 }
 
 RoomManager::~RoomManager() {
@@ -20,7 +21,7 @@ bool RoomManager::addRoomToList(int flr, char sfx) {
 	rooms[h].state = eRoomState::AVAILABLE;
 	rooms[h].populateRoomNumber();
 	
-	roomlists[eRoomState::AVAILABLE].s_list.insert(h);
+	roomlists[eRoomState::AVAILABLE].addRoom(h);
 	return true;
 }
 
@@ -34,7 +35,7 @@ bool RoomManager::addRoomToList(std::string roomNum) {
 
 bool RoomManager::hasRoomInList(std::string roomNum, eRoomState liststate) {
 	int h = getRoomIdHash(roomNum);
-	return (roomlists[liststate].isSorted ? roomlists[liststate].s_list.count(h) : roomlists[liststate].u_list.count(h));
+	return roomlists[liststate].hasRoom(h);
 }
 
 bool RoomManager::hasRoom(std::string roomNum) {
@@ -44,11 +45,9 @@ bool RoomManager::hasRoom(std::string roomNum) {
 
 std::string RoomManager::requestAndAssignRoom() {
 	std::string res;
-	if (!roomlists[eRoomState::AVAILABLE].s_list.empty()) {
-		const int h = (*roomlists[eRoomState::AVAILABLE].s_list.begin());
-		if (changeRoomState(h, eRoomState::AVAILABLE, eRoomState::OCCUPIED)) {
-			res = rooms[h].id;
-		}
+	auto h = roomlists[eRoomState::AVAILABLE].getNextRoom();
+	if (h > 0 && changeRoomState(h, eRoomState::AVAILABLE, eRoomState::OCCUPIED)) {
+		res = rooms[h].id;
 	}
 	return res;
 }
@@ -86,12 +85,11 @@ bool RoomManager::roomInRepair(std::string roomNum) {
 }
 
 std::vector<std::string> RoomManager::listAllAvailableRooms() {
-	std::vector<std::string> res;
-
-	for (auto& r : roomlists[eRoomState::AVAILABLE].s_list) {
+	std::vector<std::string> res = {};
+	auto rms = roomlists[eRoomState::AVAILABLE].getAllRooms();
+	for (auto& r : rms) {
 		res.emplace_back(rooms[r].id);
 	}
-
 	return res;
 }
 
@@ -182,25 +180,13 @@ std::pair<int, char> RoomManager::getRoomDetailsFromNum(const std::string& roomN
 	return std::make_pair(-1, sfx);
 }
 
-bool RoomManager::changeRoomState(int rmId, eRoomState fromState, eRoomState toState) {
-	if (rooms.count(rmId)) {
-
-		if (roomlists[fromState].isSorted) {
-			if (!roomlists[fromState].s_list.erase(rmId))
-				return false;
-		}
-		else {
-			if (!roomlists[fromState].u_list.erase(rmId))
-				return false;
-		}
-
-		if (roomlists[toState].isSorted)
-			roomlists[toState].s_list.insert(rmId);
-		else
-			roomlists[toState].u_list.insert(rmId);
-
-		rooms[rmId].state = toState;
-		return true;
+bool RoomManager::changeRoomState(int rmHash, eRoomState fromState, eRoomState toState) {
+	if (!rooms.count(rmHash) || !roomlists[fromState].hasRoom(rmHash)) {
+		return false;
 	}
-	return false;
+
+	roomlists[fromState].rmvRoom(rmHash);
+	roomlists[toState].addRoom(rmHash);
+	rooms[rmHash].state = toState;
+	return true;
 }

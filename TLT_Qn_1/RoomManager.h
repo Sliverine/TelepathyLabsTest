@@ -6,6 +6,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <variant>
 using namespace std;
 
 enum class eRoomState : int {
@@ -52,21 +53,57 @@ public:
 	bool roomInRepair(std::string roomNum);
 	std::vector<std::string> listAllAvailableRooms();
 	
-private:
+protected:
 	static int getRoomIdHash(const int flr, const char sfx);
 	static int getRoomIdHash(const std::string &roomNum);
 	static std::pair<int, char> getRoomDetailsFromHash(int hash);
 	static std::pair<int, char> getRoomDetailsFromNum(const std::string& roomNum);
-	bool changeRoomState(int rmId, eRoomState fromState, eRoomState toState);
+	bool changeRoomState(int rmHash, eRoomState fromState, eRoomState toState);
 
 	struct RoomList
 	{
 		bool isSorted = false;
-		union
-		{
-			std::unordered_set<int> u_list;
-			std::set<int> s_list;
-		};
+		std::set<int> sorted_list;
+		std::unordered_set<int> list;
+
+		void addRoom(int r) {
+			if (isSorted)
+				sorted_list.insert(r);
+			else
+				list.insert(r);
+		}
+
+		bool rmvRoom(int r) {
+			return (isSorted ? sorted_list.erase(r) : list.erase(r));
+		}
+
+		int getNextRoom() {
+			if (isSorted && !sorted_list.empty()) {
+				return (*sorted_list.begin());
+			}
+
+			if (!isSorted && !list.empty()) {
+				return (*list.begin());
+			}
+			return -1;
+		}
+
+		std::vector<int> getAllRooms() {
+			std::vector<int> res = {};
+			if (isSorted) {
+				for (auto& x : sorted_list)
+					res.emplace_back(x);
+			}
+			else {
+				for (auto& x : list)
+					res.emplace_back(x);
+			}
+			return res;
+		}
+
+		bool hasRoom(int r) {
+			return (isSorted ? sorted_list.count(r) : list.count(r));
+		}
 	};
 
 	std::unordered_map<int, Room> rooms;
