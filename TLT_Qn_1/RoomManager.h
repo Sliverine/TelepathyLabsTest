@@ -42,6 +42,8 @@ public:
 
 	bool addRoomToList(int flr, char sfx);
 	bool addRoomToList(std::string roomNum);
+	bool hasRoomInList(std::string roomNum, eRoomState liststate);
+	bool hasRoom(std::string roomNum);
 
 	std::string requestAndAssignRoom();
 	bool roomCheckout(std::string roomNum);
@@ -53,7 +55,8 @@ public:
 private:
 	static int getRoomIdHash(const int flr, const char sfx);
 	static int getRoomIdHash(const std::string &roomNum);
-	static std::pair<int, char> getRoomNumFromHash(int hash);
+	static std::pair<int, char> getRoomDetailsFromHash(int hash);
+	static std::pair<int, char> getRoomDetailsFromNum(const std::string& roomNum);
 	bool changeRoomState(int rmId, eRoomState fromState, eRoomState toState);
 
 	struct RoomList

@@ -25,12 +25,21 @@ bool RoomManager::addRoomToList(int flr, char sfx) {
 }
 
 bool RoomManager::addRoomToList(std::string roomNum) {
-	int h = getRoomIdHash(roomNum);
-	if (h < 0 || rooms.find(h) != rooms.end())
+	auto details = getRoomDetailsFromNum(roomNum);
+	if (details.first < 0)
 		return false;
 
-	auto rmDetails = getRoomNumFromHash(h);
-	return addRoomToList(rmDetails.first, rmDetails.second);
+	return addRoomToList(details.first, details.second);
+}
+
+bool RoomManager::hasRoomInList(std::string roomNum, eRoomState liststate) {
+	int h = getRoomIdHash(roomNum);
+	return (roomlists[liststate].isSorted ? roomlists[liststate].s_list.count(h) : roomlists[liststate].u_list.count(h));
+}
+
+bool RoomManager::hasRoom(std::string roomNum) {
+	int h = getRoomIdHash(roomNum);
+	return rooms.count(h);
 }
 
 std::string RoomManager::requestAndAssignRoom() {
@@ -115,27 +124,22 @@ int RoomManager::getRoomIdHash(const int flr, const char sfx) {
 }
 
 int RoomManager::getRoomIdHash(const std::string &roomNum) {
-	size_t i = 0;
-	char sfx = '\0';
-	for (; i < roomNum.length(); ++i) {
-		if (!std::isdigit(roomNum[i])) {
-			sfx = (char)std::toupper((int)roomNum[i]);
-			break;
-		}	
-	}
+	auto details = getRoomDetailsFromNum(roomNum);
+	if (details.first < 0)
+		return -1;
 
-	std::string str = roomNum.substr(0, i);
-	if (!str.empty() && sfx != '\0') {
-		int flr = std::atoi(str.c_str());
-		return getRoomIdHash(flr, sfx);
-	}
-	return -1;
+	return getRoomIdHash(details.first, details.second);
 }
 
-std::pair<int, char> RoomManager::getRoomNumFromHash(int hash) {
+std::pair<int, char> RoomManager::getRoomDetailsFromHash(int hash) {
+	char c = '\0';
+	if (hash <= 0) {
+		return std::make_pair(-1, c);
+	}
+
 	int floor = hash / 10;
 	int suf = hash % 10;
-	char c = '\0';
+	
 	bool inv = floor % 2 == 0;
 
 	switch (suf) {
@@ -158,6 +162,24 @@ std::pair<int, char> RoomManager::getRoomNumFromHash(int hash) {
 			return std::make_pair(-1, c);
 	}
 	return std::make_pair(floor, c);
+}
+
+std::pair<int, char> RoomManager::getRoomDetailsFromNum(const std::string& roomNum) {
+	size_t i = 0;
+	char sfx = '\0';
+	for (; i < roomNum.length(); ++i) {
+		if (!std::isdigit(roomNum[i])) {
+			sfx = (char)std::toupper((int)roomNum[i]);
+			break;
+		}
+	}
+
+	std::string str = roomNum.substr(0, i);
+	if (!str.empty() && sfx != '\0') {
+		int flr = std::atoi(str.c_str());
+		return std::make_pair(flr, sfx);
+	}
+	return std::make_pair(-1, sfx);
 }
 
 bool RoomManager::changeRoomState(int rmId, eRoomState fromState, eRoomState toState) {
