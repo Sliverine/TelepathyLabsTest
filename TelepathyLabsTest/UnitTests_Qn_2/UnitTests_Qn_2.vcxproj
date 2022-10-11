@@ -19,13 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{a0b123d2-9d13-44bc-a8cf-38e1fff70f01}</ProjectGuid>
+    <ProjectGuid>{a4d068db-ec07-44a5-80f5-3fb5460441e9}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
-    <ProjectName>UnitTests_Qn_1</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -37,7 +36,7 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="q1_tests.cpp" />
+    <ClCompile Include="q2_tests.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -46,8 +45,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\TLT_Qn_1\TLT_Qn_1.vcxproj">
-      <Project>{58093d96-f599-4e3a-85f6-b76ced89be91}</Project>
+    <ProjectReference Include="..\..\TLT_Qn_2\TLT_Qn_2.vcxproj">
+      <Project>{7353c4b9-f776-4611-b418-c16a2f98fc39}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,7 @@
 
 
 TEST_F(RoomManagerTest, HasRoom) {
+	// test hasRoom fn with correct and wrong input
 	EXPECT_TRUE(rm_test.hasRoom("2b"));
 	EXPECT_TRUE(rm_test.hasRoom("3B"));
 	EXPECT_FALSE(rm_test.hasRoom("1A"));
@@ -10,32 +11,39 @@ TEST_F(RoomManagerTest, HasRoom) {
 }
 
 TEST_F(RoomManagerTest, AddRoom) {
+	// test variant 1 of add room fn
 	EXPECT_TRUE(rm_test.addNewRoom("1a"));
 	EXPECT_FALSE(rm_test.addNewRoom("1A"));
 	EXPECT_TRUE(rm_test.hasRoom("1A"));
-
+	// test variant 2 of add room fn
 	EXPECT_TRUE(rm_test.addNewRoom(1, 'e'));
 	EXPECT_FALSE(rm_test.addNewRoom("1E"));
 	EXPECT_TRUE(rm_test.hasRoom("1E"));
-	// test edge cases
+	// test edge cases for string input for variant 1
 	EXPECT_FALSE(rm_test.addNewRoom("1234"));
 	EXPECT_FALSE(rm_test.addNewRoom("abcd"));
 	EXPECT_FALSE(rm_test.addNewRoom("1"));
 	EXPECT_FALSE(rm_test.addNewRoom("b"));
 	EXPECT_TRUE(rm_test.addNewRoom("11b"));
 	EXPECT_FALSE(rm_test.addNewRoom("11bb"));
-
+	// test edge cases for variant 2
 	EXPECT_FALSE(rm_test.addNewRoom(0, 'a'));
+	EXPECT_FALSE(rm_test.addNewRoom(-2, 'e'));
 }
 
 TEST_F(RoomManagerTest, RequestAndAssignRoom) {
+	// test empty case with no rooms inited
 	RoomManager rm_temp;
 	EXPECT_EQ(rm_temp.requestAndAssignRoom(), "");
-
+	// test std functionality
 	EXPECT_EQ(rm_test.requestAndAssignRoom(), "1B");
 	EXPECT_EQ(rm_test.requestAndAssignRoom(), "1C");
 	EXPECT_EQ(rm_test.requestAndAssignRoom(), "1D");
 	EXPECT_EQ(rm_test.requestAndAssignRoom(), "2E");
+
+	rm_test.roomCheckout("1C");
+	rm_test.roomCleaned("1C");
+	EXPECT_EQ(rm_test.requestAndAssignRoom(), "1C");
 }
 
 TEST_F(RoomManagerTest, CheckoutRoom) {
