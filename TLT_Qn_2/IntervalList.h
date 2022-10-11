@@ -5,7 +5,7 @@
 #include <map>
 using namespace std;
 
-class IntervalList
+class IntervalList // assumption here is all intervals are unique, duplicate intervals are not supported
 {
 public:
 	IntervalList();

@@ -2,6 +2,7 @@
 
 
 TEST_F(IntervalListTest, InsertTest) {
+	// test correct & incorrect insertion
 	EXPECT_TRUE(it_test.insert(std::make_pair(2, 1)));
 	EXPECT_FALSE(it_test.insert(std::make_pair(1, 1)));
 }
@@ -26,6 +27,6 @@ TEST_F(IntervalListTest, PrintTest) {
 		{7,1}, {7,2}, {7,3}, {7,4}, {7,5}, {7,6}, {7,7}, {7,8}, {7,9}, {7,10},
 		{9,1}, {9,2}, {9,3}, {9,4}, {9,5}, {9,6}, {9,7}, {9,8}, {9,9}, {9,10}
 	};
-
+	// test correct print
 	EXPECT_EQ(it_test.printAll(), expected);
 }
